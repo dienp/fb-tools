@@ -6,6 +6,7 @@ async function like_friend_post() {
     let myId = getMyId();
     let fb_dtsg = getFBToken();
     let arrPostId = [];
+    let waitTime = 2000;
     let arrUId = await get_friend_uid(myId);
     console.log('arrUId', arrUId);
     //let the100 = shuffle(arrUId).slice(0, 99);
@@ -14,14 +15,30 @@ async function like_friend_post() {
     let no = -1;
     for (let id of arrUId) {
         console.log("---" + (++no) + "---Getting " + id + " most recent post...");
-        let postId = await get_friend_post(id);
-        await wait(2000).then(function () {
-            send_like_request(myId, postId, fb_dtsg);
+
+        await get_friend_post(id).then(({
+            postId,
+            requestTime
+        }) => {
+            if (requestTime >= waitTime) {
+                wait(0)
+                    .then((time) => {
+                        console.log('requestTime', requestTime);
+                        console.log('waitedTime', time);
+                        send_like_request(myId, postId, fb_dtsg)
+                    });
+            } else {
+                wait(waitTime - requestTime)
+                    .then((time) => {
+                        console.log('requestTime', requestTime);
+                        console.log('waitedTime', time);
+                        send_like_request(myId, postId, fb_dtsg)
+                    });
+            }
         });
     }
     alert("Done like_friend_post.");
 }
-3
 /*Async functions*/
 async function get_friend_uid(myId) {
     return new Promise(function (resolve, reject) {
@@ -44,6 +61,7 @@ async function get_friend_uid(myId) {
 
 async function get_friend_post(uid) {
     return new Promise(function (resolve, reject) {
+        let start_time = new Date().getTime();
         let arrPostId = [];
         let request = new XMLHttpRequest;
         request.open("GET", "https://www.facebook.com/" + uid, true);
@@ -57,14 +75,17 @@ async function get_friend_post(uid) {
                         let postId = text[i].match(/\d+/g)[0];
                         arrPostId.push(postId);
                     };*/
-                    let postId = text[0].match(/\d+/g)[0]
-                    resolve(postId);
+                    let request_time = new Date().getTime() - start_time;
+                    let postId = text[0].match(/\d+/g)[0];
+                    resolve({
+                        postId: postId,
+                        requestTime: request_time
+                    });
                 }
             };
         };
         request.send();
     })
-
 }
 
 async function send_like_request(myId, postId, fb_dtsg) {
@@ -92,10 +113,11 @@ async function send_like_request(myId, postId, fb_dtsg) {
 /*Util functions*/
 async function wait(miliseconds) {
     return new Promise(function (resolve, reject) {
+        let start_time = new Date().getTime();
         setTimeout(function () {
-            resolve();
-        }, miliseconds)
-    });
+            resolve(new Date().getTime() - start_time);
+        }, miliseconds);
+    })
 }
 
 function getMyId() {
@@ -140,20 +162,16 @@ function getFBToken() {
 function shuffle(array) {
     var currentIndex = array.length,
         temporaryValue, randomIndex;
-
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
-
         // Pick a remaining element...
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
-
         // And swap it with the current element.
         temporaryValue = array[currentIndex];
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
     }
-
     return array;
 }
 start_like_friend_post()
