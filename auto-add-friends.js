@@ -123,11 +123,13 @@ function clean_ui() {
 }
 
 function clean_trash_cards() {
-    let keep = document.body.querySelectorAll("._4p2o");
-    for (let i = 0; i < keep.length; i++) {
-        if (!keep[i].innerHTML.match("Add Friend"))
-            keep[i].parentNode.removeChild(keep[i]);
+    let card = document.body.querySelectorAll("._4p2o");
+    for (let i = 0; i < card.length; i++) {
+        if (!(card[i].innerHTML.match(/Add Friend/))) {
+            card[i].parentNode.removeChild(card[i]);
+        }
     }
+    logger.info("Cleaned trash cards.");
 }
 
 function Logger() {
