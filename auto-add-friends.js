@@ -24,10 +24,10 @@ async function auto_add_friends() {
         console.log("[INFO][" + getTime() + "]: Scrolled " + i + " times");
         scroll_to_bottom();
         await wait(2000);
-        if (i % 5 == 0) {
+        if (i % 5 == 0 || is_end_of_scroll()) {
             let addBtn = scan_add_buttons();
             console.log("[INFO][" + getTime() + "]: Found " + addBtn.length + " \"Add friend\" buttons");
-            if (addBtn.length >= maxFriends) {
+            if (addBtn.length >= maxFriends || is_end_of_scroll()) {
                 console.log("[INFO][" + getTime() + "]: Adding...");
                 click_add_buttons(addBtn);
                 break;
