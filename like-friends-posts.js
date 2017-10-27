@@ -49,6 +49,7 @@ async function get_friend_uid(myId) {
         request.onreadystatechange = function () {
             if (request.readyState == 4) {
                 let data = JSON.parse(unescape(request.responseText.match(/\[{.+}\]/g)));
+                console.log('data', data);
                 data.forEach(function (el, i) {
                     arrId.push(el.uid);
                 });
