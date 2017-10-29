@@ -1,0 +1,73 @@
+Request URL:https://www.facebook.com/ajax/add_friend/action.php?dpr=1
+Request Method:POST
+Status Code:200 
+Remote Address:31.13.78.35:443
+Referrer Policy:origin-when-cross-origin
+Response Headers
+access-control-allow-credentials:true
+access-control-allow-method:OPTIONS
+access-control-allow-origin:https://www.facebook.com
+access-control-expose-headers:X-FB-Debug, X-Loader-Length
+cache-control:private, no-cache, no-store, must-revalidate
+content-encoding:br
+content-security-policy:default-src * data: blob:;script-src *.facebook.com *.fbcdn.net *.facebook.net *.google-analytics.com *.virtualearth.net *.google.com 127.0.0.1:* *.spotilocal.com:* 'unsafe-inline' 'unsafe-eval' fbstatic-a.akamaihd.net fbcdn-static-b-a.akamaihd.net *.atlassolutions.com blob: data: 'self';style-src data: blob: 'unsafe-inline' *;connect-src *.facebook.com *.fbcdn.net *.facebook.net *.spotilocal.com:* *.akamaihd.net wss://*.facebook.com:* https://fb.scanandcleanlocal.com:* *.atlassolutions.com attachment.fbsbx.com ws://localhost:* blob: *.cdninstagram.com 'self' chrome-extension://boadgeojelhgndaghljhdicfkmllpafd chrome-extension://dliochdbjfkdbacpmhlcpmleaejidimm;
+content-type:application/x-javascript; charset=utf-8
+date:Sun, 29 Oct 2017 04:43:58 GMT
+expect-ct:max-age=10, report-uri="http://reports.fb.com/expectct/"
+expires:Sat, 01 Jan 2000 00:00:00 GMT
+pragma:no-cache
+public-key-pins-report-only:max-age=600; pin-sha256="WoiWRyIOVNa9ihaBciRSC7XHjliYS9VwUGOIud4PB18="; pin-sha256="k2v657xBsOVe1PQRwOsHsw3bsGT2VzIqz5K+59sNQws="; pin-sha256="gMxWOrX4PMQesK9qFNbYBxjBfjUvlkn/vN1n+L9lE5E="; pin-sha256="q4PO2G2cbkZhZ82+JgmRUyGMoAeozA+BSXVXQWB8XWQ="; includeSubdomains; report-uri="http://reports.fb.com/hpkp/"
+status:200
+strict-transport-security:max-age=15552000; preload
+vary:Accept-Encoding
+vary:Origin
+x-content-type-options:nosniff
+x-fb-debug:LfOCiyGABKRg12keq2zB/UToXvCoDZCdZENQdJFzEzMzRxBz3yWXoBx9LjoLWhytj8JR0pHuhgn5GfcwuH9voQ==
+x-frame-options:DENY
+x-xss-protection:0
+Request Headers
+:authority:www.facebook.com
+:method:POST
+:path:/ajax/add_friend/action.php?dpr=1
+:scheme:https
+accept:*/*
+accept-encoding:gzip, deflate, br
+accept-language:en-US,en;q=0.8,vi;q=0.6,ja;q=0.4
+content-length:1453
+content-type:application/x-www-form-urlencoded
+cookie:datr=e9VXWUxWk9lh9zBytjzM22J9; js_ver=2852; x-referer=eyJyIjoiL3B0ZGllbi5seGFnL2ZyaWVuZHM%2FbHN0PTEwMDAwNjAxNDM3MzY4OCUzQTEwMDAwNjAxNDM3MzY4OCUzQTE1MDg5NDU1NjciLCJoIjoiL3B0ZGllbi5seGFnL2ZyaWVuZHM%2FbHN0PTEwMDAwNjAxNDM3MzY4OCUzQTEwMDAwNjAxNDM3MzY4OCUzQTE1MDg5NDU1NjciLCJzIjoibSJ9; m_pixel_ratio=1; locale=vi_VN; sb=1mNYWVW_BkjUUFF6qM6t7oOz; pl=n; c_user=100006014373688; xs=16%3Aqc5zaViXuoDEzA%3A2%3A1509165950%3A17496%3A6232; fr=0AJU6S323mJHPv233.AWXvR5MVi0aBbXvTR118eM6cxY8.BZVzqt.R4.Fn0.0.0.BZ9Vet.AWXm43te; act=1509251741762%2F0; dpr=1; wd=1303x325; presence=EDvF3EtimeF1509252240EuserFA21B06014373688A2EstateFDutF1509252240228CEchFDp_5f1B06014373688F79CC
+origin:https://www.facebook.com
+referer:https://www.facebook.com/search/me/non-friends/str/TMA+Solutions/pages-named/employees/present/intersect
+user-agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36
+Query String Parameters
+view source
+view URL encoded
+dpr:1
+Form Data
+view source
+view URL encoded
+to_friend:100003270778951
+action:add_friend
+how_found:browse
+ref_param:none
+link_data[gt][type]:xtracking
+link_data[gt][xt]:21.{"module_type":null,"item_type":"result","display_style":"user_row","position_in_module":null,"id":"100003270778951","raw_id":100003270778951,"query":"intersect(non-friends(me),present(employees(pages-named(TMA+Solutions))))","session_id":"a7997639a9983c466474282669565ab4","vertical":"none","result_creation_timestamp":null,"module_result_type":"browse_type_user","source_module_role":null,"subrequests":[],"unit_id":"browse_rl:6cbf82523cb56c6d49826c089474ea39:c1","unit_id_click_type":"graph_search_results_item_tapped","unit_id_result_id":"100003270778951"}
+outgoing_id:
+logging_location:
+no_flyout_on_click:false
+ego_log_data:
+http_referer:
+floc:
+__user:100006014373688
+__a:1
+__dyn:7AgNeyfyGmaxx2u6aOGeFxqeCwDKFbGAdy8VFLFwxx-bzES2N6wAxu13wFQEa8gxebkwy6UnGii9x2uVWxeUW2ei4GVk3uaVVojxCUSbAWCDxi5-78O5u5o5aayrgS2m4oqyUfe5FLK4UB1G7WxR4ypK5ESrxqawDDhomx22yq3O9Dx6WK64q4oK8Gm8z8O784afxK9yUvybx7yESVU4eQExyUPz_Q48x5x67byUmzUzF1zyFEC2bgLKcw
+__af:h0
+__req:9p
+__be:0
+__pc:PHASED:DEFAULT
+__rev:3410704
+fb_dtsg:AQFxAngBSAwG:AQFmKNmRTAVo
+jazoest:2658170120651101036683651197158658170109757810982846586111
+__spin_r:3410704
+__spin_b:trunk
+__spin_t:1509251357

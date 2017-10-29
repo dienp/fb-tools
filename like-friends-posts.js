@@ -1,3 +1,6 @@
+let logger = new Logger();
+start_like_friend_post();
+
 function start_like_friend_post() {
     like_friend_post();
 }
@@ -8,14 +11,11 @@ async function like_friend_post() {
     let arrPostId = [];
     let waitTime = 2000;
     let arrUId = await get_friend_uid(myId);
-    console.log('arrUId', arrUId);
-    //let the100 = shuffle(arrUId).slice(0, 99);
-    //console.log('the100', the100);
-    console.log("----Getting your friends most recent posts...");
+    logger.info(`Total ${arrUId.length} friends.`);
+    logger.info("Getting your friends most recent posts...");
     let no = -1;
     for (let id of arrUId) {
-        console.log("---" + (++no) + "---Getting " + id + " most recent post...");
-
+        logger.info(`[${++no}]Getting most recent post of UID = ${id}...`);
         await get_friend_post(id).then(({
             postId,
             requestTime
@@ -23,26 +23,21 @@ async function like_friend_post() {
             if (requestTime >= waitTime) {
                 wait(0)
                     .then((time) => {
-                        console.log('requestTime', requestTime);
-                        console.log('waitedTime', time);
-                        send_like_request(myId, postId, fb_dtsg)
+                        send_like_request(myId, postId, fb_dtsg);
                     });
             } else {
                 wait(waitTime - requestTime)
                     .then((time) => {
-                        console.log('requestTime', requestTime);
-                        console.log('waitedTime', time);
-                        send_like_request(myId, postId, fb_dtsg)
+                        send_like_request(myId, postId, fb_dtsg);
                     });
-            }
+            };
         });
-    }
+    };
     alert("Done like_friend_post.");
-}
+};
 /*Async functions*/
 async function get_friend_uid(myId) {
     return new Promise(function (resolve, reject) {
-        console.log("Getting your friends UIDs...");
         let request = new XMLHttpRequest;
         let arrId = [];
         request.open("GET", "/ajax/typeahead/first_degree.php?__a=1&filter[0]=user&lazy=0&viewer=" + myId + "&__user=" + myId + "&token=v7&stale_ok=0&options[0]=friends_only&options[1]=nm", true);
@@ -82,12 +77,12 @@ async function get_friend_post(uid) {
                         postId: postId,
                         requestTime: request_time
                     });
-                }
+                };
             };
         };
         request.send();
-    })
-}
+    });
+};
 
 async function send_like_request(myId, postId, fb_dtsg) {
     return new Promise(function (resolve, reject) {
@@ -99,17 +94,16 @@ async function send_like_request(myId, postId, fb_dtsg) {
         xhr.onreadystatechange = function () {
             if (this.readyState == 4) {
                 if (reactionType === 1) {
-                    console.log(`------------Liked ${postId} status ${this.status}`);
+                    logger.info(`Send "Like" request to post id = ${postId} (${this.status})`);
                 } else {
-                    console.log(`------------Loved ${postId} status ${this.status}`);
+                    logger.info(`Send "Love" request to post id = ${postId} (${this.status})`);
                 }
                 resolve();
             };
         };
         xhr.send(params);
-    })
-
-}
+    });
+};
 
 /*Util functions*/
 async function wait(miliseconds) {
@@ -125,10 +119,7 @@ function getMyId() {
     let myId = null;
     if (document.cookie.match(/c_user=(\d+)/)) {
         if (document.cookie.match(/c_user=(\d+)/)[1]) {
-            myId = document.cookie.match(document.cookie.match(/c_user=(\d+)/)[1])
-            return myId;
-        } else {
-            myId = prompt("ID not found in cookies, please enter it manually: ", "");
+            myId = document.cookie.match(document.cookie.match(/c_user=(\d+)/)[1]);
             return myId;
         }
     } else {
@@ -144,7 +135,7 @@ function getFBToken() {
             fb_dtsg = document.documentElement.innerHTML.match(/,\{"token":"\(.\*\?\)"/g)[0].replace(',\{"token":"', '').replace('"', '');
             return fb_dtsg;
         } catch (e) {
-            console.log("Error: ", e);
+            logger.error(e);
         };
     } else {
         try {
@@ -155,7 +146,7 @@ function getFBToken() {
                 }
             }
         } catch (e) {
-            console.log("Error: ", e);
+            logger.error(e);
         };
     };
 }
@@ -163,16 +154,28 @@ function getFBToken() {
 function shuffle(array) {
     var currentIndex = array.length,
         temporaryValue, randomIndex;
-    // While there remain elements to shuffle...
+    /*While there remain elements to shuffle...*/
     while (0 !== currentIndex) {
-        // Pick a remaining element...
+        /*Pick a remaining element...*/
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
-        // And swap it with the current element.
+        /*And swap it with the current element.*/
         temporaryValue = array[currentIndex];
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
     }
     return array;
 }
-start_like_friend_post()
+
+function Logger() {
+    this.info = function (message) {
+        console.log("[INFO][" + getTime() + "]: " + message);
+    }
+    this.error = function (message) {
+        console.error("[ERROR][" + getTime() + "]: " + message)
+    }
+}
+
+function getTime() {
+    return (new Date()).toUTCString();
+}

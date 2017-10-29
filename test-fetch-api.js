@@ -1,7 +1,7 @@
-function fetch_url() {
-    var request = new Request('https://davidwalsh.name/users.json', {
-        method: 'POST',
-        mode: 'cors',
+function fetch_url(url) {
+    var request = new Request(url, {
+        method: 'GET',
+        mode: 'no-cors',
         redirect: 'follow',
         headers: new Headers({
             'Content-Type': 'text/plain'
@@ -9,10 +9,9 @@ function fetch_url() {
     });
     fetch(request)
         .then(function (response) {
-            return response.json();
-        }).then(function (jsonData) {
-            console.log(jsonData);
+            console.log(response);
         }).catch(function (err) {
             console.log("Opps, Something went wrong!", err);
-        })
+        });
 }
+fetch_url("https://www.facebook.com/ajax/typeahead/first_degree.php?__a=1&filter[0]=user&lazy=0&viewer=" + 100006014373688 + "&__user=" + 100006014373688 + "&token=v7&stale_ok=0&options[0]=friends_only&options[1]=nm");

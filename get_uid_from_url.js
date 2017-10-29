@@ -2,7 +2,7 @@ javascript: (function () {
     start_get_get_uid_from_url();
 
     function start_get_get_uid_from_url() {
-        let url = prompt("Enter URL:", "");
+        let url = prompt("Enter URL:", "https://www.facebook.com/ptdien.lxag");
         if (!url) {
             if (confirm("Invalid URL, do you want to continue?") == true) {
                 start_get_get_uid_from_url();
