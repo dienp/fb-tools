@@ -60,7 +60,7 @@ async function click_add_buttons(addBtn,maxFriends) {
         if (i % 10 == 0 || i % (maxFriends - 1) == 0) {
             dismiss_dialogs()
         }
-        logger.info("Added " + i);
+        logger.info("Added " + (i+1));
         await wait(2000);
     }
 }
