@@ -6,7 +6,7 @@ function start_auto_add_friends() {
     auto_add_friends();
 }
 
-async function scroll_to_bottom() {
+function scroll_to_bottom() {
     window.scrollTo(0, document.body.scrollHeight);
 }
 
@@ -34,7 +34,7 @@ async function auto_add_friends() {
             }
             logger.info("Found " + addBtn.length + " \"Add friend\" buttons");
             if (addBtn.length >= maxFriends || is_end_of_scroll()) {
-                click_add_buttons(addBtn);
+                click_add_buttons(addBtn,maxFriends);
                 break;
             }
         }
@@ -50,14 +50,14 @@ function scan_add_buttons() {
     return addBtn;
 }
 
-async function click_add_buttons(addBtn) {
+async function click_add_buttons(addBtn,maxFriends) {
     if (addBtn.length < 1) {
         return;
     }
     logger.info("Adding...");
-    for (let i = 0; i < addBtn.length; i++) {
+    for (let i = 0; i < maxFriends; i++) {
         addBtn[i].click();
-        if (i % 10 == 0 || i % (addBtn.length - 1) == 0) {
+        if (i % 10 == 0 || i % (maxFriends - 1) == 0) {
             dismiss_dialogs()
         }
         logger.info("Added " + i);
