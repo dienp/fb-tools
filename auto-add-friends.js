@@ -2,6 +2,7 @@ var logger = new Logger();
 start_auto_add_friends();
 
 function start_auto_add_friends() {
+    console.clear();
     clean_ui();
     auto_add_friends();
 }
@@ -16,8 +17,6 @@ async function auto_add_friends() {
         logger.error("Invalid maxFriends value.");
         if (confirm("Invalid input value. Do you want to enter it again?") == true) {
             start_auto_add_friends();
-        } else {
-            logger.info("Application has been stopped.")
         }
         return;
     }
@@ -25,6 +24,7 @@ async function auto_add_friends() {
     for (let i = 0;; i++) {
         scroll_to_bottom();
         logger.info("Scrolled " + (i + 1) + " times");
+        await wait(2000);
         if (i % 5 == 0 || is_end_of_scroll()) {
             clean_trash_cards();
             let addBtn = scan_add_buttons();
@@ -34,13 +34,12 @@ async function auto_add_friends() {
             }
             logger.info("Found " + addBtn.length + " \"Add friend\" buttons");
             if (addBtn.length >= maxFriends || is_end_of_scroll()) {
-                click_add_buttons(addBtn,maxFriends);
+                await click_add_buttons(addBtn, maxFriends);
+                alert("Done adding friends.");                
                 break;
             }
         }
-        await wait(2000);
     }
-    logger.info("Application has been stopped.");
 }
 
 function scan_add_buttons() {
@@ -49,17 +48,21 @@ function scan_add_buttons() {
     return addBtn;
 }
 
-async function click_add_buttons(addBtn,maxFriends) {
-    logger.info("Adding...");
-    for (let i = 0; i < maxFriends; i++) {
-        addBtn[i].click();
-        if (i % 10 == 0 || i % (maxFriends - 1) == 0) {
-            dismiss_dialogs()
-        }
-        logger.info("Added " + (i+1));
-        await wait(2000);
-    }
-}
+async function click_add_buttons(addBtn, maxFriends) {
+    return new Promise(async (resolve,reject)=>{
+        logger.info("Adding...");
+        let max = addBtn.length < maxFriends ? addBtn.length : maxFriends;
+        for (let i = 0; i < max; i++) {
+            addBtn[i].click();
+            logger.info("Added " + (i + 1));
+            if (i % 10 == 0 || i == (max - 1)) {
+                dismiss_dialogs();
+            }
+            await wait(2000);
+        };
+        resolve();
+    })
+}   
 
 function dismiss_dialogs() {
     logger.info("Scanning for dialogs...");
@@ -76,13 +79,13 @@ function dismiss_dialogs() {
             if (dialog[i].querySelector('.layerConfirm')) {
                 dialog[i].querySelector('.layerConfirm').click();
             } else {
-                logger.error("Unable to dismiss dialog: " + dialog[i]);
+                logger.error("Unable to dismiss dialog: ", dialog[i]);
             }
         } else {
             if (dialog[i].querySelector('.layerCancel')) {
                 dialog[i].querySelector('.layerCancel').click();
             } else {
-                logger.error("Unable to dismiss dialog: " + dialog[i]);
+                logger.error("Unable to dismiss dialog: ", dialog[i]);
             }
         }
     }
@@ -102,7 +105,7 @@ function is_end_of_scroll() {
 async function wait(miliseconds) {
     return new Promise(function (resolve, reject) {
         setTimeout(function () {
-            resolve("Done waiting");
+            resolve();
         }, miliseconds);
     })
 }
@@ -113,6 +116,9 @@ function getTime() {
 
 function clean_ui() {
     let nope = document.body.querySelectorAll("#pagelet_bluebar,#pagelet_sidebar,#pagelet_dock, #toolbarContainer,#leftCol,#rightCol,#bottomContent");
+    if (nope === null || nope.length < 1) {
+        return;
+    }
     for (let i = 0; i < nope.length; i++) {
         nope[i].parentNode.removeChild(nope[i]);
     }
@@ -120,6 +126,9 @@ function clean_ui() {
 
 function clean_trash_cards() {
     let card = document.body.querySelectorAll("._4p2o");
+    if (card === null || card.length < 1) {
+        return;
+    }
     for (let i = 0; i < card.length; i++) {
         if (!(card[i].innerHTML.match(/Add Friend/))) {
             card[i].parentNode.removeChild(card[i]);

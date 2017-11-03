@@ -67,10 +67,6 @@ async function get_friend_post(uid) {
                 if (text === null) {
                     resolve([]);
                 } else {
-                    /*for (let i = 0; i < text.length; i++) {
-                        let postId = text[i].match(/\d+/g)[0];
-                        arrPostId.push(postId);
-                    };*/
                     let request_time = new Date().getTime() - start_time;
                     let postId = text[0].match(/\d+/g)[0];
                     resolve({
