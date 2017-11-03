@@ -73,7 +73,6 @@ function dismiss_dialogs() {
         return;
     }
     logger.info("Found " + dialog.length + " dialog(s)");
-    logger.info("Dismissing dialog(s)...");
     for (let i = 0; i < dialog.length; i++) {
         if (dialog[i].innerHTML.indexOf("Does This Person Know You") > 0) {
             if (dialog[i].querySelector('.layerConfirm')) {
@@ -89,7 +88,7 @@ function dismiss_dialogs() {
             }
         }
     }
-    logger.info("Done dismissing dialog(s)...");
+    logger.info("Dismissed dialog(s).");
 }
 
 function is_end_of_scroll() {
