@@ -41,7 +41,6 @@ async function auto_add_friends() {
         await wait(2000);
     }
     logger.info("Application has been stopped.");
-    return;
 }
 
 function scan_add_buttons() {
@@ -51,9 +50,6 @@ function scan_add_buttons() {
 }
 
 async function click_add_buttons(addBtn,maxFriends) {
-    if (addBtn.length < 1) {
-        return;
-    }
     logger.info("Adding...");
     for (let i = 0; i < maxFriends; i++) {
         addBtn[i].click();

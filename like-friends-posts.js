@@ -2,6 +2,7 @@ let logger = new Logger();
 start_like_friend_post();
 
 function start_like_friend_post() {
+    console.clear();
     like_friend_post();
 }
 
@@ -22,12 +23,12 @@ async function like_friend_post() {
         }) => {
             if (requestTime >= waitTime) {
                 wait(0)
-                    .then((time) => {
+                    .then(() => {
                         send_like_request(myId, postId, fb_dtsg);
                     });
             } else {
                 wait(waitTime - requestTime)
-                    .then((time) => {
+                    .then(() => {
                         send_like_request(myId, postId, fb_dtsg);
                     });
             };
@@ -44,7 +45,6 @@ async function get_friend_uid(myId) {
         request.onreadystatechange = function () {
             if (request.readyState == 4) {
                 let data = JSON.parse(unescape(request.responseText.match(/\[{.+}\]/g)));
-                console.log('data', data);
                 data.forEach(function (el, i) {
                     arrId.push(el.uid);
                 });
