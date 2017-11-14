@@ -1,29 +1,45 @@
+var logger = new Logger();
+start();
 
-/*Wait for a set amount time*/
-function wait(milliseconds) {
-    return new Promise((resolve, reject) => {
-        setTimeout(function () {
-            resolve();
-        }, milliseconds);
-    });
+function start() {
+    console.clear();    
+    invite_friends_like_page();
 }
 
-
-function invite_friends_like_page(){
-
+async function invite_friends_like_page() {
+    let user = getMyId();
+    let fb_dtsg = getFBToken();
+    let friends = await get_friend_uid(user);
+    let pageUrl = prompt("Enter your page URL: ", "https://www.facebook.com/BetterLeadership/");
+    if (!pageUrl) {
+        if (confirm("Invalid URL, do you want to continue?") == true) {
+            start();
+        };
+        return;
+    };
+    let pageId = await get_page_id_from_url(pageUrl);
+    if (!pageId) {
+        if (confirm("Invalid URL, do you want to continue?") == true) {
+            start();
+        };
+        return;
+    };
+    for (let i = 0; i < friends.length; i++) {
+        send_invite(user, fb_dtsg, friends[i], pageId);
+        await wait(2000);
+    }
 }
 
-function send_invite(friendId,pageId){
+function send_invite(user, fb_dtsg, friendId, pageId) {
     return new Promise(function (resolve, reject) {
-        let url  = `https://www.facebook.com/ajax/pages/invite/send_single/?dpr=1`;       
+        let url = `/ajax/pages/invite/send_single/?dpr=1`;
         let xhr = new XMLHttpRequest;
-        let params = `page_id=${pageId}&invitee=${friendId}
-        &action=send&is_send_in_messenger=false&__user=${getMyId()}&__a=1&fb_dtsg=${getFBToken()}`;
-        xhr.open("POST", url, true); /* Request header content-type */
+        let params = `invite_note=&ref=context_row_dialog&is_send_in_messenger=false&page_id=${pageId}&invitee=${friendId}&action=send&is_send_in_messenger=false&__user=${user}&__a=1&fb_dtsg=${fb_dtsg}`;
+        xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
         xhr.onreadystatechange = function () {
             if (this.readyState == 4) {
-                logger.info("");
+                logger.info(`Sent invite to ${friendId} (${this.status})`);
                 resolve();
             };
         };
@@ -31,7 +47,6 @@ function send_invite(friendId,pageId){
     });
 }
 
-/*Get your friends UIDs*/
 function get_friend_uid(myId) {
     return new Promise(function (resolve, reject) {
         let request = new XMLHttpRequest;
@@ -50,6 +65,23 @@ function get_friend_uid(myId) {
     });
 }
 
+function get_page_id_from_url(url) {
+    return new Promise((resolve, reject) => {
+        let xhr = new XMLHttpRequest;
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    let pageId = xhr.responseText.match(/page\/\?id=\d+/)[0].match(/\d+/)[0];
+                    resolve(pageId);
+                } else {
+                    reject();
+                }
+            };
+        };
+        xhr.send();
+    })
+}
 
 /*Get Your Own UID*/
 function getMyId() {
@@ -89,6 +121,13 @@ function getFBToken() {
     };
 }
 
+function wait(milliseconds) {
+    return new Promise((resolve, reject) => {
+        setTimeout(function () {
+            resolve();
+        }, milliseconds);
+    });
+}
 
 function Logger() {
     this.info = function (message) {
