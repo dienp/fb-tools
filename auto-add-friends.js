@@ -1,4 +1,4 @@
-var logger = new Logger();
+let logger = new Logger();    
 start_auto_add_friends();
 
 function start_auto_add_friends() {

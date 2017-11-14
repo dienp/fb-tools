@@ -80,7 +80,7 @@ async function get_friend_post(uid) {
     });
 };
 
-async function send_like_request(myId, postId, fb_dtsg) {
+function send_like_request(myId, postId, fb_dtsg) {
     return new Promise(function (resolve, reject) {
         let xhr = new XMLHttpRequest;
         let reactionType = Math.floor(Math.random() * 2) + 1;
@@ -102,7 +102,7 @@ async function send_like_request(myId, postId, fb_dtsg) {
 };
 
 /*Util functions*/
-async function wait(miliseconds) {
+function wait(miliseconds) {
     return new Promise(function (resolve, reject) {
         let start_time = new Date().getTime();
         setTimeout(function () {
