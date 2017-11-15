@@ -2,6 +2,7 @@ let logger = new Logger();
 start_like_friend_post();
 
 function start_like_friend_post() {
+    console.clear();
     like_friend_post();
 }
 
@@ -22,12 +23,12 @@ async function like_friend_post() {
         }) => {
             if (requestTime >= waitTime) {
                 wait(0)
-                    .then((time) => {
+                    .then(() => {
                         send_like_request(myId, postId, fb_dtsg);
                     });
             } else {
                 wait(waitTime - requestTime)
-                    .then((time) => {
+                    .then(() => {
                         send_like_request(myId, postId, fb_dtsg);
                     });
             };
@@ -44,7 +45,6 @@ async function get_friend_uid(myId) {
         request.onreadystatechange = function () {
             if (request.readyState == 4) {
                 let data = JSON.parse(unescape(request.responseText.match(/\[{.+}\]/g)));
-                console.log('data', data);
                 data.forEach(function (el, i) {
                     arrId.push(el.uid);
                 });
@@ -67,10 +67,6 @@ async function get_friend_post(uid) {
                 if (text === null) {
                     resolve([]);
                 } else {
-                    /*for (let i = 0; i < text.length; i++) {
-                        let postId = text[i].match(/\d+/g)[0];
-                        arrPostId.push(postId);
-                    };*/
                     let request_time = new Date().getTime() - start_time;
                     let postId = text[0].match(/\d+/g)[0];
                     resolve({
@@ -84,7 +80,7 @@ async function get_friend_post(uid) {
     });
 };
 
-async function send_like_request(myId, postId, fb_dtsg) {
+function send_like_request(myId, postId, fb_dtsg) {
     return new Promise(function (resolve, reject) {
         let xhr = new XMLHttpRequest;
         let reactionType = Math.floor(Math.random() * 2) + 1;
@@ -106,7 +102,7 @@ async function send_like_request(myId, postId, fb_dtsg) {
 };
 
 /*Util functions*/
-async function wait(miliseconds) {
+function wait(miliseconds) {
     return new Promise(function (resolve, reject) {
         let start_time = new Date().getTime();
         setTimeout(function () {
