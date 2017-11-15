@@ -1,45 +1,52 @@
 var logger = new Logger();
-start();
+start_invite_frriends();
 
-function start() {
-    console.clear();    
+function start_invite_frriends() {
     invite_friends_like_page();
 }
 
 async function invite_friends_like_page() {
-    let user = getMyId();
+    debugger;
+    let myId = getMyId();
     let fb_dtsg = getFBToken();
-    let friends = await get_friend_uid(user);
-    let pageUrl = prompt("Enter your page URL: ", "https://www.facebook.com/BetterLeadership/");
+    let pageUrl = prompt("Enter your page URL: ", "");
     if (!pageUrl) {
-        if (confirm("Invalid URL, do you want to continue?") == true) {
-            start();
-        };
+        if (confirm("Invalid URL. Do you want to enter it again?")) {
+            start_invite_frriends();
+        }
         return;
-    };
-    let pageId = await get_page_id_from_url(pageUrl);
-    if (!pageId) {
-        if (confirm("Invalid URL, do you want to continue?") == true) {
-            start();
-        };
+    }
+    try {
+        let resultPage = await check_page_url(pageUrl);
+        if (confirm(`Found page: ${resultPage}. Continue?`) == true) {
+            let pageId = await get_page_id_from_url(pageUrl);
+            let friendArr = await get_friend_uid(myId, pageId);
+            logger.info(`Total friends: ${friendArr.length}`);
+            for (let i = 0; i < friendArr.length; i++) {
+                let friendId = friendArr[i];
+                send_invite(friendId, pageId[0], myId, fb_dtsg, i);
+                await wait(2000);
+            }
+        }
+    } catch (err) {
+        logger.error(err);
+        if (confirm(`${err}. Do you want to enter the url again?`)) {
+            start_invite_frriends();
+        }
         return;
-    };
-    for (let i = 0; i < friends.length; i++) {
-        send_invite(user, fb_dtsg, friends[i], pageId);
-        await wait(2000);
     }
 }
 
-function send_invite(user, fb_dtsg, friendId, pageId) {
+function send_invite(friendId, pageId, myId, fb_dtsg, no) {
     return new Promise(function (resolve, reject) {
-        let url = `/ajax/pages/invite/send_single/?dpr=1`;
+        let url = `https://www.facebook.com/ajax/pages/invite/send_single/?dpr=1`;
         let xhr = new XMLHttpRequest;
-        let params = `invite_note=&ref=context_row_dialog&is_send_in_messenger=false&page_id=${pageId}&invitee=${friendId}&action=send&is_send_in_messenger=false&__user=${user}&__a=1&fb_dtsg=${fb_dtsg}`;
+        let params = `page_id=${pageId}&invitee=${friendId}&action=send&is_send_in_messenger=false&__user=${myId}&__a=1&fb_dtsg=${fb_dtsg}`;
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
         xhr.onreadystatechange = function () {
             if (this.readyState == 4) {
-                logger.info(`Sent invite to ${friendId} (${this.status})`);
+                logger.info(`[${no}]Sent invite to ${friendId} (${this.status})`);
                 resolve();
             };
         };
@@ -47,11 +54,13 @@ function send_invite(user, fb_dtsg, friendId, pageId) {
     });
 }
 
-function get_friend_uid(myId) {
+/*Get your friends UIDs*/
+function get_friend_uid(myId, pageId) {
     return new Promise(function (resolve, reject) {
         let request = new XMLHttpRequest;
         let arrId = [];
-        request.open("GET", "/ajax/typeahead/first_degree.php?__a=1&filter[0]=user&lazy=0&viewer=" + myId + "&__user=" + myId + "&token=v7&stale_ok=0&options[0]=friends_only&options[1]=nm", true);
+        let url = `https://www.facebook.com/pages/typeahead/invite_bootstrap/?page_id=${pageId}&dpr=1&options[0]=friends_only&viewer=${myId}&__a=1`
+        request.open("GET", url, true);
         request.onreadystatechange = function () {
             if (request.readyState == 4) {
                 let data = JSON.parse(unescape(request.responseText.match(/\[{.+}\]/g)));
@@ -65,22 +74,44 @@ function get_friend_uid(myId) {
     });
 }
 
+/*Get page Id from URL*/
 function get_page_id_from_url(url) {
     return new Promise((resolve, reject) => {
         let xhr = new XMLHttpRequest;
         xhr.open("GET", url, true);
         xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                if (xhr.responseText.match(/fb\:\/\/page\/\?id=\d+/)) {
+                    let pageId = xhr.responseText.match(/fb\:\/\/page\/\?id=\d+/)[0].match(/\d+/);
+                    if (pageId) {
+                        resolve(pageId);
+                    }
+                    reject("Page ID Not Found");
+                }
+                reject("Page ID Not Found");
+            };
+        };
+        xhr.send();
+    });
+}
+
+/*Check valid page url*/
+function check_page_url(url) {
+    return new Promise((resolve, reject) => {
+        let xhr = new XMLHttpRequest;
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function () {
             if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    let pageId = xhr.responseText.match(/page\/\?id=\d+/)[0].match(/\d+/)[0];
-                    resolve(pageId);
+                if (xhr.status == 404) {
+                    reject("Page Not Found");
                 } else {
-                    reject();
+                    let pageName = xhr.responseText.match(/title="[^"]+"/)[0].match(/"[^"]+"/)[0].replace(/"/g, "");
+                    resolve(pageName);
                 }
             };
         };
         xhr.send();
-    })
+    });
 }
 
 /*Get Your Own UID*/
@@ -121,14 +152,6 @@ function getFBToken() {
     };
 }
 
-function wait(milliseconds) {
-    return new Promise((resolve, reject) => {
-        setTimeout(function () {
-            resolve();
-        }, milliseconds);
-    });
-}
-
 function Logger() {
     this.info = function (message) {
         console.log("[INFO][" + getTime() + "]: " + message);
@@ -140,4 +163,13 @@ function Logger() {
 
 function getTime() {
     return (new Date()).toUTCString();
+}
+
+/*Wait for a set amount time*/
+function wait(milliseconds) {
+    return new Promise((resolve, reject) => {
+        setTimeout(function () {
+            resolve();
+        }, milliseconds);
+    });
 }
