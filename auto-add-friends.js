@@ -14,13 +14,11 @@ function scroll_to_bottom() {
 async function auto_add_friends() {
     let maxFriends = parseInt(prompt("Enter how many friends you wanna add: ", "150"));
     if (typeof maxFriends === 'undefined' || !maxFriends) {
-        logger.error("Invalid maxFriends value.");
         if (confirm("Invalid input value. Do you want to enter it again?") == true) {
             start_auto_add_friends();
         }
         return;
     }
-    logger.info("Scrolling...");
     for (let i = 0;; i++) {
         scroll_to_bottom();
         logger.info("Scrolled " + (i + 1) + " times");
@@ -29,10 +27,8 @@ async function auto_add_friends() {
             clean_trash_cards();
             let addBtn = scan_add_buttons();
             if (addBtn.length < 1) {
-                logger.info("No \"Add Friend\" buttons found.");
                 continue;
             }
-            logger.info("Found " + addBtn.length + " \"Add friend\" buttons");
             if (addBtn.length >= maxFriends || is_end_of_scroll()) {
                 await click_add_buttons(addBtn, maxFriends);
                 alert("Done adding friends.");                
@@ -43,7 +39,6 @@ async function auto_add_friends() {
 }
 
 function scan_add_buttons() {
-    logger.info("Scanning for \"Add Friend\" buttons...")
     let addBtn = document.body.querySelectorAll('#contentArea .addButton:not(.hidden_elem)');
     return addBtn;
 }
@@ -64,12 +59,10 @@ async function click_add_buttons(addBtn, maxFriends) {
     })
 }   
 
-function dismiss_dialogs() {
-    logger.info("Scanning for dialogs...");
-    let dialog = document.body.querySelectorAll('.uiLayer div[role="dialog"]:not(.uiContextualLayerBelowLeft)');
 
+function dismiss_dialogs() {
+    let dialog = document.body.querySelectorAll('.uiLayer div[role="dialog"]:not(.uiContextualLayerBelowLeft)');
     if (dialog.length < 1) {
-        logger.info("No dialogs found.");
         return;
     }
     logger.info("Found " + dialog.length + " dialog(s)");
@@ -94,7 +87,6 @@ function dismiss_dialogs() {
 function is_end_of_scroll() {
     let endScroll = document.body.querySelector('._24j');
     if (endScroll !== null) {
-        logger.info("Found \"End of Results\".");
         return true;
     }
     return false;
@@ -107,10 +99,6 @@ async function wait(miliseconds) {
             resolve();
         }, miliseconds);
     })
-}
-
-function getTime() {
-    return (new Date()).toUTCString();
 }
 
 function clean_ui() {
@@ -135,7 +123,6 @@ function clean_trash_cards() {
     }
     logger.info("Cleaned trash cards.");
 }
-
 function Logger() {
     this.info = function (message) {
         console.log("[INFO][" + getTime() + "]: " + message);
