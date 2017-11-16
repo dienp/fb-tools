@@ -1,4 +1,4 @@
-let logger = new Logger();    
+let logger = new Logger();
 start_auto_add_friends();
 
 function start_auto_add_friends() {
@@ -26,12 +26,9 @@ async function auto_add_friends() {
         if (i % 5 == 0 || is_end_of_scroll()) {
             clean_trash_cards();
             let addBtn = scan_add_buttons();
-            if (addBtn.length < 1) {
-                continue;
-            }
             if (addBtn.length >= maxFriends || is_end_of_scroll()) {
                 await click_add_buttons(addBtn, maxFriends);
-                alert("Done adding friends.");                
+                alert("Done adding friends.");
                 break;
             }
         }
@@ -40,31 +37,29 @@ async function auto_add_friends() {
 
 function scan_add_buttons() {
     let addBtn = document.body.querySelectorAll('#contentArea .addButton:not(.hidden_elem)');
+    logger.info("Found " + addBtn.length + " \"Add friend\" buttons");    
     return addBtn;
 }
 
-async function click_add_buttons(addBtn, maxFriends) {
-    return new Promise(async (resolve,reject)=>{
+function click_add_buttons(addBtn, maxFriends) {
+    return new Promise(async(resolve, reject) => {
         logger.info("Adding...");
         let max = addBtn.length < maxFriends ? addBtn.length : maxFriends;
         for (let i = 0; i < max; i++) {
             addBtn[i].click();
             logger.info("Added " + (i + 1));
-            if (i % 10 == 0 || i == (max - 1)) {
+            await wait(2000);            
+            if (i % 2 == 0 || i == (max - 1)) {
                 dismiss_dialogs();
             }
-            await wait(2000);
         };
         resolve();
     })
-}   
+}
 
 
 function dismiss_dialogs() {
     let dialog = document.body.querySelectorAll('.uiLayer div[role="dialog"]:not(.uiContextualLayerBelowLeft)');
-    if (dialog.length < 1) {
-        return;
-    }
     logger.info("Found " + dialog.length + " dialog(s)");
     for (let i = 0; i < dialog.length; i++) {
         if (dialog[i].innerHTML.indexOf("Does This Person Know You") > 0) {
@@ -93,7 +88,7 @@ function is_end_of_scroll() {
 }
 
 /*Util Functions*/
-async function wait(miliseconds) {
+function wait(miliseconds) {
     return new Promise(function (resolve, reject) {
         setTimeout(function () {
             resolve();
@@ -123,6 +118,7 @@ function clean_trash_cards() {
     }
     logger.info("Cleaned trash cards.");
 }
+
 function Logger() {
     this.info = function (message) {
         console.log("[INFO][" + getTime() + "]: " + message);
@@ -130,4 +126,8 @@ function Logger() {
     this.error = function (message) {
         console.error("[ERROR][" + getTime() + "]: " + message)
     }
+}
+
+function getTime() {
+    return (new Date()).toUTCString();
 }
