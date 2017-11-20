@@ -1,37 +1,43 @@
 var logger = new Logger();
-start_invite_frriends();
+start_invite_friends();
 
-function start_invite_frriends() {
+function start_invite_friends() {
     invite_friends_like_page();
 }
 
 async function invite_friends_like_page() {
-    debugger;
     let myId = getMyId();
     let fb_dtsg = getFBToken();
     let pageUrl = prompt("Enter your page URL: ", "");
     if (!pageUrl) {
         if (confirm("Invalid URL. Do you want to enter it again?")) {
-            start_invite_frriends();
+            start_invite_friends();
         }
         return;
     }
+    let limit = parseInt(prompt("Limit: ", 100));    
     try {
         let resultPage = await check_page_url(pageUrl);
         if (confirm(`Found page: ${resultPage}. Continue?`) == true) {
             let pageId = await get_page_id_from_url(pageUrl);
             let friendArr = await get_friend_uid(myId, pageId);
-            logger.info(`Total friends: ${friendArr.length}`);
-            for (let i = 0; i < friendArr.length; i++) {
+            logger.info(`Total friends (not invited): ${friendArr.length}`);
+            logger.info(`Limit: ${limit}`);
+            if(limit > friendArr.length){
+                limit = friendArr.length;
+                logger.info(`Set limit =  ${limit} due to not enough friends left.`);                                
+            }
+            for (let i = 0; i < limit; i++) {
                 let friendId = friendArr[i];
                 send_invite(friendId, pageId[0], myId, fb_dtsg, i);
                 await wait(2000);
             }
+            alert(`Done inviting ${limit} friends.`);
         }
     } catch (err) {
         logger.error(err);
         if (confirm(`${err}. Do you want to enter the url again?`)) {
-            start_invite_frriends();
+            start_invite_friends();
         }
         return;
     }

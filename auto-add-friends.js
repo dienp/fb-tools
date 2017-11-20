@@ -88,11 +88,11 @@ function is_end_of_scroll() {
 }
 
 /*Util Functions*/
-function wait(miliseconds) {
+function wait(milliseconds) {
     return new Promise(function (resolve, reject) {
         setTimeout(function () {
             resolve();
-        }, miliseconds);
+        }, milliseconds);
     })
 }
 
