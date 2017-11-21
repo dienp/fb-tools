@@ -1,5 +1,0 @@
-
----> GET friends that are not invited to page;
-
-
-https://www.facebook.com/pages/typeahead/invite_bootstrap/?page_id=153128978374469&dpr=1&options[0]=friends_only&viewer:100006014373688&__a=1
