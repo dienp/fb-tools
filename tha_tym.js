@@ -15,7 +15,7 @@ function tha_tym(times) {
         for (let i = 0; i < times; i++) {
             let reaction = array[random_generator(array)];
             reaction.click();
-            await wait(1000);
+            await wait(500);
         };
         resolve();
     });
