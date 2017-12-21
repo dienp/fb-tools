@@ -1,11 +1,13 @@
 test_post_comment();
 
 function test_post_comment() {
-    let comment = "OK4";
-    let postId = "163554481051163";
+    let comment = "OK5";
+    let postId = "112956032803094";
     let stickerId = "488541281259317"; //mugsy under the rain
-    let myId = getMyId();
-    let fb_dtsg = getFBToken();
+    //let myId = getMyId();
+    let myId = "100006014373688"; //ptdien id
+    //let fb_dtsg = getFBToken();
+    let fb_dtsg = "AQG4BGaar_wg:AQED9VE5ElWE";// ptdien fb_dtsg
     send_post_comment(comment, stickerId, postId, myId, fb_dtsg);
 }
 
@@ -29,6 +31,7 @@ function send_post_comment(comment, stickerId, postId, myId, fb_dtsg) {
     params += `fb_dtsg=${fb_dtsg}`;
 
     xhr.open("POST", url, true);
+    document.cookie=`c_user=${myId}`;
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4) {

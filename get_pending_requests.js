@@ -1,18 +1,61 @@
+start_cancel_outgoing_request();
 
-start_cancel_outgoing_request(){
-    get_pending_friend_request_ids();    
+function start_cancel_outgoing_request() {
+    cancel_outgoing_request();
 }
 
-
-function get_pending_friend_request_ids() {
-    a = new XMLHttpRequest();
-    a.open("GET", "/friends/requests/outgoing/more/?page=1&page_size=5000&pager_id=outgoing_reqs_pager_5586f2e3ba8949a98558844&__user=100006014373688&__a=1", true);
-    a.onreadystatechange = function () {
-        if (a.readyState == 4) {
-           console.log(a.responseText);
-        }
+async function cancel_outgoing_request() {
+    let fb_dtsg = getFBToken();
+    let myId = getMyId();
+    let friends = await get_pending_friend_outgoing_request_ids(myId);
+    console.log(friends.length);
+    for (let i = 0; i < friends.length; i++) {
+        send_cancel_outgoing_request(myId, friends[i], fb_dtsg);
     }
-    a.send();
+}
+
+function get_pending_friend_outgoing_request_ids(myId) {
+    return new Promise(function (resolve, reject) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", `/friends/requests/outgoing/more/?page=1&page_size=5000&pager_id=outgoing_reqs_pager_5586f2e3ba8949a98558844&__user=${myId}&__a=1`, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                let data = JSON.parse(unescape(xhr.responseText.match(/\[{.+}\]/g)));
+                let arrId = [];
+                data.forEach(function (el, i) {
+                    arrId.push(el.uid);
+                });
+                resolve(arrId);
+            }
+        }
+        xhr.send();
+    });
+}
+
+function send_cancel_outgoing_request(myId, friendId, fb_dtsg) {
+    return new Promise(function (resolve, reject) {
+        let xhr = new XMLHttpRequest();
+        let url = "https://www.facebook.com/ajax/friends/requests/cancel.php?dpr=1";
+        let params = `friend=${friendId}&cancel_ref=outgoing_requests&__user=${myId}&__a=1&_fb_dtsg=${fb_dtsg}&confirmed=1`;
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                console.log(`Sent cancel request to ${friendId} (${xhr.status})`);
+                resolve();
+            }
+        }
+        xhr.send(params);
+    });
+
+}
+
+function wait(miliseconds) {
+    return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+            resolve();
+        }, miliseconds);
+    })
 }
 
 /*Get Your Own UID*/
