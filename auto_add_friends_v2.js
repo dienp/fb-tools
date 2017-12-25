@@ -1,6 +1,6 @@
 var logger = new Logger()
-start(getMax())
-async function start (max) {
+startAddingFriends(getMax())
+async function startAddingFriends (max) {
   let sent = getSent()
   logger.info(`Checking for status...`)
   if (sent.length === max) {
@@ -16,11 +16,12 @@ async function start (max) {
   }
   await addFriend(max - sent.length)
   if (isEndOfScroll()) {
+    logger.info(`Added ${sent.length} out of ${max} friends.`)
     window.alert(`Hit the bottom. Application stopped.`)
     logger.info('Hit the bottom. Application stopped')
     return
   }
-  start(max)
+  startAddingFriends(max)
 }
 
 /* Click $max number of  visible [Add Friend] buttons on the screen */
@@ -29,7 +30,8 @@ async function addFriend (max) {
   logger.info(`Scanning...`)
   for (let i = 0; ; i++) {
     let notSent = getNotSent()
-    if (notSent.length >= max) {
+    if (notSent.length >= max || isEndOfScroll()) {
+      max = notSent.length > max ? max : notSent.length
       logger.info(`Found ${notSent.length} [Add Friend] buttons.`)
       logger.info(`Adding...`)
       for (let j = 0; j < max; j++) {
