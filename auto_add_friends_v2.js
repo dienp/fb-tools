@@ -2,28 +2,36 @@ const logger = new Logger()
 var totalClicked = 0
 
 startAddingFriends(getMax())
-logger.info(`Scrolled down (px): ${scrollDistance()}`)
-logger.info(`Total [Add Friend] buttons clicked: ${totalClicked}`)
-logger.info(`Total [Friend Request Sent] buttons found: ${getSent()}`)
 
 async function startAddingFriends (max) {
   let sent = getSent()
   logger.info(`Checking for status...`)
   logger.info(`Added ${sent.length} out of ${max} friends.`)
   if (sent.length === max) {
+    report()
     window.alert(`Added ${sent.length} out of ${max} friends. Application stopped.`)
     return
   }
-  /* Not to run cleanTrashCards on first execution */
-  if (sent.length > 0) {
-    /* Clean all cards except for ones that has [Friend Request Sent] buttons */
-    cleanTrashCards()
-  }
+
   await addFriend(max - sent.length)
+
   if (isEndOfScroll()) {
+    report()
     window.alert(`Hit the bottom. Application stopped.`)
     return
   }
+
+  if (sent.length > 0) {
+    /* Clean all cards except for ones that has [Friend Request Sent] buttons */
+    cleanTrashCards()
+  } else {
+    logger.info(`0 sent found. Cleaning cards...`)
+    let notSent = getNotSent()
+    for (let i = max - 1; i < 0; i--) {
+      notSent[i].parentNode.removeChild(notSent[i])
+    }
+  }
+
   startAddingFriends(max)
 }
 
@@ -129,4 +137,10 @@ function getTime () {
 
 function scrollDistance () {
   return window.pageXOffset
+}
+
+function report () {
+  logger.info(`Scrolled down (px): ${scrollDistance()}`)
+  logger.info(`Total [Add Friend] buttons clicked: ${totalClicked}`)
+  logger.info(`Total [Friend Request Sent] buttons found: ${getSent().length}`)
 }
