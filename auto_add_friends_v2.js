@@ -27,8 +27,9 @@ async function startAddingFriends (max) {
   } else {
     logger.info(`0 sent found. Cleaning cards...`)
     let notSent = getNotSent()
-    for (let i = max - 1; i < 0; i--) {
-      notSent[i].parentNode.removeChild(notSent[i])
+    for (let i = 0; i < max; i++) {
+      let parent = notSent[i].closest('._4p2o')
+      parent.parentNode.removeChild(parent)
     }
   }
 
