@@ -1,6 +1,6 @@
 var logger = new Logger()
 
-start(100)
+start(1000)
 
 /* Start the application, $size determines how many outgoing requests will be cancel */
 async function start (size) {

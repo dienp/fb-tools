@@ -1,6 +1,7 @@
 const logger = new Logger()
 var totalClicked = 0
 
+cleanUI()
 startAddingFriends(getMax())
 
 async function startAddingFriends (max) {
@@ -8,16 +9,14 @@ async function startAddingFriends (max) {
   logger.info(`Checking for status...`)
   logger.info(`Added ${sent.length} out of ${max} friends.`)
   if (sent.length === max) {
-    report()
-    window.alert(`Added ${sent.length} out of ${max} friends. Application stopped.`)
+    window.alert(`Added ${getSent().length} out of ${max} friends.\nTotal [Add Friend] buttons clicked: ${totalClicked}.\nApplication stopped.`)
     return
   }
 
   await addFriend(max - sent.length)
 
   if (isEndOfScroll()) {
-    report()
-    window.alert(`Hit the bottom. Application stopped.`)
+    window.alert(`Added ${getSent().length} out of ${max} friends.\nTotal [Add Friend] buttons clicked: ${totalClicked}.\nApplication stopped.`)
     return
   }
 
@@ -27,19 +26,14 @@ async function startAddingFriends (max) {
   } else {
     logger.info(`0 sent found. Cleaning cards...`)
     let notSent = getNotSent()
-    let deleted = 0
     for (let i = 0; i < notSent.length; i++) {
       let parent = notSent[i].closest('._4p2o')
       if (parent) {
-        deleted++
         parent.parentNode.removeChild(parent)
-      }
-      if (deleted >= max) {
-        break
       }
     }
   }
-
+  cleanTrashCards()
   startAddingFriends(max)
 }
 
@@ -49,6 +43,7 @@ async function addFriend (max) {
   logger.info(`Scanning...`)
   for (let i = 0; ; i++) {
     let notSent = getNotSent()
+    logger.info(`Found ${notSent.length} [Add Friend] buttons.`)
     if (notSent.length >= max || isEndOfScroll()) {
       max = notSent.length > max ? max : notSent.length
       logger.info(`Found ${notSent.length} [Add Friend] buttons.`)
@@ -130,6 +125,13 @@ function dismissDialogs () {
   }
 }
 
+function cleanUI () {
+  let nope = document.body.querySelectorAll('#pagelet_bluebar,#pagelet_sidebar,#pagelet_dock, #toolbarContainer,#leftCol,#rightCol,#bottomContent')
+  for (let i = 0; i < nope.length; i++) {
+    nope[i].parentNode.removeChild(nope[i])
+  }
+}
+
 function Logger () {
   this.info = function (message) {
     console.log('[INFO][' + getTime() + ']: ' + message)
@@ -141,14 +143,4 @@ function Logger () {
 
 function getTime () {
   return (new Date()).toUTCString()
-}
-
-function scrollDistance () {
-  return window.pageXOffset
-}
-
-function report () {
-  logger.info(`Scrolled down (px): ${scrollDistance()}`)
-  logger.info(`Total [Add Friend] buttons clicked: ${totalClicked}`)
-  logger.info(`Total [Friend Request Sent] buttons found: ${getSent().length}`)
 }
